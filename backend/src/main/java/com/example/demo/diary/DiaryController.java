@@ -15,15 +15,20 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.User.User;
 import com.example.demo.User.UserRepository;
+import com.example.demo.diaryGoal.DiaryGoal;
+import com.example.demo.diaryGoal.DiaryGoalRepository;
 
 @Controller
 public class DiaryController {
 
 	@Autowired
 	DiaryRepository diaryRepo;
-	
+
 	@Autowired
 	UserRepository userRepo;
+	
+	@Autowired
+	DiaryGoalRepository diaryGoalRepo;
 
 	@RequestMapping(value = "/diaries/{userId}")
 	public @ResponseBody Collection<Diary> getDiaries(@PathVariable("userId") Long userId) {
@@ -42,14 +47,18 @@ public class DiaryController {
 		} else {
 			diary.setUser(user);
 			diary.setDate(new Date());
+			
+			for(DiaryGoal diaryGoal : diary.getDiaryGoals()) {
+				diaryGoal.setDiary(diary);
+			}
 
 			return diaryRepo.save(diary);
 		}
 	}
 
 	@RequestMapping(value = "/diaries/{id}", method = RequestMethod.PUT)
-	public @ResponseBody boolean modifyDiary(@PathVariable("id") long id, @RequestBody String title,
-			@RequestBody String content, HttpServletResponse res) {
+	public @ResponseBody boolean modifyDiary(@PathVariable("id") long id, @RequestBody Diary newDiary,
+			HttpServletResponse res) {
 
 		Diary diary = diaryRepo.findById(id).orElse(null);
 
@@ -57,8 +66,8 @@ public class DiaryController {
 			res.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			return false;
 		} else {
-			diary.setTitle(title);
-			diary.setContent(content);
+			diary.setTitle(newDiary.getTitle());
+			diary.setContent(newDiary.getContent());
 			diaryRepo.save(diary);
 			res.setStatus(HttpServletResponse.SC_OK);
 			return true;

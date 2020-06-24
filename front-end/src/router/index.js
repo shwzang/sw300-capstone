@@ -26,12 +26,36 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/Goal.vue')
   },
   {
+    path: '/goalCreate',
+    name: 'GoalCreate',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/GoalCreate.vue')
+  },
+  {
+    path: '/goalModify',
+    name: 'GoalModify',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/GoalModify.vue')
+  },
+  {
     path: '/diary',
     name: 'Diary',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/Diary.vue')
+  },
+  {
+    path: '/diaryCreate',
+    name: 'DiaryCreate',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/DiaryCreate.vue')
   },
   {
     path: '/dashboard',
@@ -60,7 +84,6 @@ const routes = [
 ]
 
 const router = new VueRouter({
-  mode: 'history',
   base: process.env.BASE_URL,
   routes
 })

@@ -62,7 +62,7 @@ public class Diary implements Serializable {
 	@Column(name = "Content", nullable = true, length = 255)
 	private String content;
 
-	@OneToMany(mappedBy = "diary", targetEntity = DiaryGoal.class)
+	@OneToMany(mappedBy = "diary", targetEntity = DiaryGoal.class, cascade = javax.persistence.CascadeType.ALL)
 	@Cascade({ CascadeType.SAVE_UPDATE, CascadeType.LOCK })
 	@LazyCollection(LazyCollectionOption.TRUE)
 	private List<DiaryGoal> diaryGoals = new ArrayList();

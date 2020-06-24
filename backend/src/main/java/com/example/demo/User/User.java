@@ -29,6 +29,7 @@ import org.hibernate.annotations.Proxy;
 import com.example.demo.diary.Diary;
 import com.example.demo.goal.Goal;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Proxy(lazy = false)
@@ -46,7 +47,7 @@ public class User implements Serializable {
 	@Column(name = "UserId", nullable = true, length = 20)
 	private String userId;
 
-	@JsonIgnore
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	@Column(name = "Password", nullable = true, length = 20)
 	private String password;
 

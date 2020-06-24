@@ -41,20 +41,14 @@ public class GoalController {
 			return null;
 		} else {
 			goal.setUser(user);
+			goal.setInProgress(true);
 			
-			List<Goal> userGoals = user.getGoals();
-			userGoals.add(goal);
-			
-			user.setGoals(userGoals);
-			userRepo.save(user);
-
 			return goalRepo.save(goal);
 		}
 	}
 
 	@RequestMapping(value = "/goals/{id}", method = RequestMethod.PUT)
-	public @ResponseBody boolean modifyGoal(@PathVariable("id") long id, @RequestBody String name,
-			@RequestBody String description, @RequestBody boolean inProgress, HttpServletResponse res) {
+	public @ResponseBody boolean modifyGoal(@PathVariable("id") long id, @RequestBody Goal newGoal, HttpServletResponse res) {
 
 		Goal goal = goalRepo.findById(id).orElse(null);
 
@@ -62,9 +56,9 @@ public class GoalController {
 			res.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			return false;
 		} else {
-			goal.setName(name);
-			goal.setDescription(description);
-			goal.setInProgress(inProgress);
+			goal.setName(newGoal.getName());
+			goal.setDescription(newGoal.getDescription());
+			goal.setInProgress(newGoal.getInProgress());
 			goalRepo.save(goal);
 			res.setStatus(HttpServletResponse.SC_OK);
 			return true;

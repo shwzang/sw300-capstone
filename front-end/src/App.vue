@@ -11,7 +11,13 @@
         {{ link.label }}
       </v-btn>
       <v-spacer></v-spacer>
-      <v-btn v-if="user != {}" text rounded>Logout</v-btn>
+      <v-btn v-if="isLoggedin" text rounded @click="logOut">Log out</v-btn>
+      <v-btn v-if="!isLoggedin" text rounded :to="{ name: 'Login' }"
+        >Log in</v-btn
+      >
+      <v-btn v-if="!isLoggedin" text rounded :to="{ name: 'Register' }"
+        >Register</v-btn
+      >
     </v-app-bar>
     <v-main>
       <router-view></router-view>
@@ -46,9 +52,28 @@ export default {
       links: [
         { label: "Home", url: "/" },
         { label: "Diary", url: "/diary" },
-        { label: "Goal", url: "/goal" },
+        { label: "Goal", url: "/goal" }
       ],
+      user: {}
     };
   },
+  computed: {
+    isLoggedin() {
+      return JSON.stringify(this.$store.state.user) != "{}";
+    }
+  },
+  methods: {
+    logOut() {
+      this.$store
+        .dispatch("logOut")
+        .then(() => {
+          alert("정상적으로 로그아웃 되었습니다");
+          this.$router.push({ name: "Home" });
+        })
+        .catch(() => {
+          console.log("There was a problem logging out");
+        });
+    }
+  }
 };
 </script>

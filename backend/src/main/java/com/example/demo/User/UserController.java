@@ -25,12 +25,31 @@ public class UserController {
 
 	@RequestMapping(value = "/users/{id}")
 	public @ResponseBody User getUser(@PathVariable("id") Long id) {
+
 		return userRepo.findById(id).orElse(null);
 	}
 
-	@RequestMapping(value = "/users/userId/{userId}")
-	public @ResponseBody User getUser(@PathVariable("userId") String userId) {
+	@RequestMapping(value = "/users/{userId}")
+	public @ResponseBody User getUser(@PathVariable("userId") String userId, HttpServletResponse res) {
 		return userRepo.findByUserId(userId);
+	}
+	
+	@RequestMapping(value = "/users/{userId}/duplicated")
+	public @ResponseBody boolean checkDuplicated(@PathVariable("userId") String userId, HttpServletResponse res) {
+		return userRepo.findByUserId(userId) != null;
+	}
+
+	@RequestMapping(value = "/users/{userId}/{password}")
+	public @ResponseBody User getUser(@PathVariable("userId") String userId, @PathVariable("password") String password,
+			HttpServletResponse res) {
+		User user = userRepo.findByUserId(userId);
+		if (user == null || !user.getPassword().equals(password)) {
+			res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return null;
+		} else {
+			res.setStatus(HttpServletResponse.SC_OK);
+			return user;
+		}
 	}
 
 	@RequestMapping(value = "/users", method = RequestMethod.POST)
