@@ -28,10 +28,12 @@ import org.hibernate.annotations.Proxy;
 
 import com.example.demo.diary.Diary;
 import com.example.demo.goal.Goal;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@Entity
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity @Getter @Setter
 @Proxy(lazy = false)
 @Table(name = "`User`")
 public class User implements Serializable {
@@ -54,63 +56,17 @@ public class User implements Serializable {
 	@Column(name = "Name", nullable = true, length = 255)
 	private String name;
 
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	@OneToMany(mappedBy = "user", targetEntity = Diary.class)
 	@Cascade({ CascadeType.SAVE_UPDATE, CascadeType.LOCK })
 	@LazyCollection(LazyCollectionOption.TRUE)
 	private List<Diary> diaries = new ArrayList();
 
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	@OneToMany(mappedBy = "user", targetEntity = Goal.class)
 	@Cascade({ CascadeType.SAVE_UPDATE, CascadeType.LOCK })
 	@LazyCollection(LazyCollectionOption.TRUE)
 	private List<Goal> goals = new ArrayList();
-
-	private void setId(Long value) {
-		this.id = value;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public String getUserId() {
-		return userId;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-
-	public void setPassword(String value) {
-		this.password = value;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setName(String value) {
-		this.name = value;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public List<Diary> getDiaries() {
-		return diaries;
-	}
-
-	public void setDiaries(List<Diary> diaries) {
-		this.diaries = diaries;
-	}
-
-	public List<Goal> getGoals() {
-		return goals;
-	}
-
-	public void setGoals(List<Goal> goals) {
-		this.goals = goals;
-	}
 
 	public String toString() {
 		return String.valueOf(getId());

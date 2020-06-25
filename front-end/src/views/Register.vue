@@ -2,39 +2,39 @@
   <v-row align="center" justify="center" class="fill-height">
     <v-col cols="10">
       <v-card>
-        <v-card-title> <h1>Login</h1> </v-card-title>
+        <v-card-title> <h1>Register</h1> </v-card-title>
         <v-card-text>
           <v-text-field
             v-model="user.userId"
             label="ID"
             :rules="userIdRule"
             clearable
-          >
-          </v-text-field>
+          ></v-text-field>
+
           <v-text-field
             v-model="user.password"
             type="password"
             label="비밀번호"
             :rules="passwordRule"
             clearable
-          >
-          </v-text-field>
+          ></v-text-field>
+
           <v-text-field
             v-model="passwordConfirm"
             type="password"
             label="비밀번호 재입력"
             :rules="passwordConfirmRule"
             clearable
-          >
-          </v-text-field>
+          ></v-text-field>
+
           <v-text-field
             v-model="user.name"
             label="이름"
             :rules="nameRule"
             clearable
-          >
-          </v-text-field>
+          ></v-text-field>
         </v-card-text>
+        
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="success" @click="summitRegister"> 회원 가입 </v-btn>
@@ -64,6 +64,8 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 export default {
   data() {
     return {
@@ -99,6 +101,9 @@ export default {
           "최소 두 글자 이상 입력하세요"
       ]
     };
+  },
+  computed: {
+    ...mapState(["user"])
   },
   methods: {
     summitRegister() {

@@ -4,7 +4,7 @@
       Diary
       <v-btn :to="{ name: 'DiaryCreate' }">일기 작성</v-btn>
     </v-col>
-    <v-col cols="10" color="primary" v-for="diary in diaries" :key="diary.id">
+    <v-col cols="10" color="primary" v-for="diary in reversedDiaries" :key="diary.id">
       <v-card>
         <v-card-title class="headline" v-text="diary.title"> </v-card-title>
         <v-card-subtitle>{{ diary.date }} </v-card-subtitle>
@@ -12,14 +12,19 @@
 
         <v-divider class="mx-4"></v-divider>
 
-        <v-card-title>하루 목표</v-card-title>
+        <v-card-title>
+          하루 목표
+        </v-card-title>
         <v-card-text>
+          {{ diary.diaryGoals.length }}개 목표 중
+          {{ goalCompleted(diary.diaryGoals) }}개 달성!!
           <v-checkbox
             v-for="diaryGoal in diary.diaryGoals"
             :key="diaryGoal.id"
             v-model="diaryGoal.achieved"
             :label="diaryGoal.goal.name"
             readonly
+            hide-details
           >
           </v-checkbox>
         </v-card-text>
@@ -35,10 +40,18 @@ export default {
   name: "Diary",
 
   computed: {
-    diaries() {
-      return this.$store.state.diaries;
-    },
-    ...mapState(["user"])
+    ...mapState(["user", "diaries"]),
+    reversedDiaries() {
+      const cloneObj = obj => JSON.parse(JSON.stringify(obj));
+      const copied = cloneObj(this.diaries);
+      return copied.reverse();
+    }
+  },
+  methods: {
+    goalCompleted(goals) {
+      let completed = goals.filter(goal => goal.achieved == true);
+      return completed.length;
+    }
   },
   created() {
     if (JSON.stringify(this.$store.state.user) == "{}") {

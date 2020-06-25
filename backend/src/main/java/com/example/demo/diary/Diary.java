@@ -32,7 +32,10 @@ import com.example.demo.User.User;
 import com.example.demo.diaryGoal.DiaryGoal;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@Entity
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity @Getter @Setter
 @Proxy(lazy = false)
 @Table(name = "Diary")
 public class Diary implements Serializable {
@@ -66,54 +69,6 @@ public class Diary implements Serializable {
 	@Cascade({ CascadeType.SAVE_UPDATE, CascadeType.LOCK })
 	@LazyCollection(LazyCollectionOption.TRUE)
 	private List<DiaryGoal> diaryGoals = new ArrayList();
-
-	private void setId(Long value) {
-		this.id = value;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setTitle(String value) {
-		this.title = value;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setDate(Date value) {
-		this.date = value;
-	}
-
-	public Date getDate() {
-		return date;
-	}
-
-	public void setContent(String value) {
-		this.content = value;
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public void setUser(User value) {
-		this.user = value;
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public List<DiaryGoal> getDiaryGoals() {
-		return diaryGoals;
-	}
-
-	public void setDiaryGoals(List<DiaryGoal> diaryGoals) {
-		this.diaryGoals = diaryGoals;
-	}
 
 	public String toString() {
 		return String.valueOf(getId());

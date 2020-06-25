@@ -12,6 +12,10 @@ export default new Vuex.Store({
     modifyingId:"",
   },
   mutations: {
+    DO_NOTHING(state) {
+      let user = state.user
+      state.user = user
+    },
     SET_USER (state, user) {
       state.user = user
     },
@@ -36,8 +40,8 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    fetchUser ({ commit }, {userId, password}) {
-      DiaryService.logIn(userId, password)
+    logIn ({ commit }, {userId, password}) {
+      return DiaryService.logIn(userId, password)
       .then(response => {
         commit('SET_USER', response.data)
       })
@@ -51,6 +55,8 @@ export default new Vuex.Store({
         commit('SET_USER', {})
       })
     },
+
+
     fetchDiaries ({ commit }, userId) {
       DiaryService.getDiaries(userId)
       .then(response => {
@@ -65,6 +71,7 @@ export default new Vuex.Store({
         commit('ADD_DIARY', diary)
       })
     },
+
     fetchGoals ({ commit }, userId) {
       DiaryService.getGoals(userId)
       .then(response => {
@@ -84,11 +91,14 @@ export default new Vuex.Store({
         commit('MODIFY_GOAL', goalId, goal)
       })
     },
+    
     setModifyingId({commit}, modifyingId) {
       commit('SET_MODIFYING_ID', modifyingId)
     },
     logOut({ commit }) {
       commit('SET_USER', {})
+      commit('SET_DIAIRES', [])
+      commit('SET_GOALS',[])
     }
   },
   modules: {}

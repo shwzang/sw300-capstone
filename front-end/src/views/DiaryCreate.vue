@@ -4,14 +4,14 @@
       <v-card>
         <v-card-title> 일기 작성 </v-card-title>
         <v-card-title>
-          <v-text-field v-model="diary.title" label="일기 제목" clearable>
+          <v-text-field v-model="diary.title" outlined label="일기 제목" clearable>
           </v-text-field>
         </v-card-title>
-        <v-card-subtitle>
+        <v-card-subtitle align="right">
           {{ date.toLocaleString() }}
         </v-card-subtitle>
         <v-card-text>
-          <v-textarea v-model="diary.content" label="일기 내용"> </v-textarea>
+          <v-textarea v-model="diary.content" outlined label="일기 내용"> </v-textarea>
         </v-card-text>
 
         <v-divider> </v-divider>
@@ -23,6 +23,7 @@
             :key="goal.id"
             v-model="diaryGoals[index].achieved"
             :label="goal.name"
+            hide-details
           >
           </v-checkbox>
         </v-card-text>

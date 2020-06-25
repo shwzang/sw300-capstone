@@ -29,6 +29,11 @@ public class DiaryController {
 	
 	@Autowired
 	DiaryGoalRepository diaryGoalRepo;
+	
+	@RequestMapping(value = "/diaries")
+	public @ResponseBody Collection<Diary> getAllDiaries() {
+		return diaryRepo.findAll();
+	}
 
 	@RequestMapping(value = "/diaries/{userId}")
 	public @ResponseBody Collection<Diary> getDiaries(@PathVariable("userId") Long userId) {
@@ -74,7 +79,7 @@ public class DiaryController {
 		}
 	}
 
-	// ªË¡¶
+	// deleteDiary
 	@RequestMapping(value = "/diaries/{id}", method = RequestMethod.DELETE)
 	public @ResponseBody boolean removeDiary(@PathVariable("id") long id, HttpServletResponse res) {
 

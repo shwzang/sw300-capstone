@@ -44,7 +44,9 @@ export default {
       ],
       goal: {
         name: "",
-        description: ""
+        description: "",
+        inProgress:"",
+        id:"",
       }
     };
   },
@@ -53,8 +55,9 @@ export default {
   },
   created() {
     let oldGoal = this.goals.find(goal => goal.id == this.modifyingId);
-    this.goal.name = oldGoal.name;
-    this.goal.description = oldGoal.description;
+    for(let prop in oldGoal) {
+      this.goal[prop] = oldGoal[prop];
+    }
   },
   methods: {
     modifyGoal() {

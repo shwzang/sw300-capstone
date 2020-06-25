@@ -24,6 +24,11 @@ public class GoalController {
 
 	@Autowired
 	UserRepository userRepo;
+	
+	@RequestMapping(value = "/goals")
+	public @ResponseBody Collection<Goal> getAllGoals() {
+		return goalRepo.findAll();
+	}
 
 	@RequestMapping(value = "/goals/{userId}")
 	public @ResponseBody Collection<Goal> getGoals(@PathVariable("userId") Long userId) {
@@ -58,14 +63,14 @@ public class GoalController {
 		} else {
 			goal.setName(newGoal.getName());
 			goal.setDescription(newGoal.getDescription());
-			goal.setInProgress(newGoal.getInProgress());
+			goal.setInProgress(newGoal.isInProgress());
 			goalRepo.save(goal);
 			res.setStatus(HttpServletResponse.SC_OK);
 			return true;
 		}
 	}
 
-	// ªË¡¶
+	// Deletes
 	@RequestMapping(value = "/goals/{id}", method = RequestMethod.DELETE)
 	public @ResponseBody boolean removeGoal(@PathVariable("id") long id, HttpServletResponse res) {
 

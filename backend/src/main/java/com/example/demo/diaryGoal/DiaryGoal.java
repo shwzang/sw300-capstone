@@ -25,7 +25,10 @@ import com.example.demo.diary.Diary;
 import com.example.demo.goal.Goal;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@Entity
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity @Getter @Setter
 @Proxy(lazy = false)
 @Table(name = "DiaryGoal")
 public class DiaryGoal implements Serializable {
@@ -53,38 +56,6 @@ public class DiaryGoal implements Serializable {
 
 	@Column(name = "IsAchieved", nullable = false, length = 1)
 	private boolean isAchieved;
-
-	private void setId(Long value) {
-		this.id = value;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public boolean isAchieved() {
-		return isAchieved;
-	}
-
-	public void setAchieved(boolean isAchieved) {
-		this.isAchieved = isAchieved;
-	}
-
-	public void setGoal(Goal value) {
-		this.goal = value;
-	}
-
-	public Goal getGoal() {
-		return goal;
-	}
-
-	public void setDiary(Diary value) {
-		this.diary = value;
-	}
-
-	public Diary getDiary() {
-		return diary;
-	}
 
 	public String toString() {
 		return String.valueOf(getId());

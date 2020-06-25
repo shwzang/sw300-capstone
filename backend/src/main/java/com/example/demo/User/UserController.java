@@ -29,22 +29,20 @@ public class UserController {
 		return userRepo.findById(id).orElse(null);
 	}
 
-	@RequestMapping(value = "/users/{userId}")
-	public @ResponseBody User getUser(@PathVariable("userId") String userId, HttpServletResponse res) {
+	@RequestMapping(value = "/users/userId/{userId}")
+	public @ResponseBody User getUserByUserId(@PathVariable("userId") String userId, HttpServletResponse res) {
 		return userRepo.findByUserId(userId);
 	}
-	
-	@RequestMapping(value = "/users/{userId}/duplicated")
-	public @ResponseBody boolean checkDuplicated(@PathVariable("userId") String userId, HttpServletResponse res) {
-		return userRepo.findByUserId(userId) != null;
-	}
 
-	@RequestMapping(value = "/users/{userId}/{password}")
-	public @ResponseBody User getUser(@PathVariable("userId") String userId, @PathVariable("password") String password,
+	@RequestMapping(value = "/login/{userId}/{password}")
+	public @ResponseBody User logIn(@PathVariable("userId") String userId, @PathVariable("password") String password,
 			HttpServletResponse res) {
 		User user = userRepo.findByUserId(userId);
-		if (user == null || !user.getPassword().equals(password)) {
+		if (user == null) {
 			res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return null;
+		} else if (!user.getPassword().equals(password)) {
+			res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return null;
 		} else {
 			res.setStatus(HttpServletResponse.SC_OK);
@@ -59,8 +57,8 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/users/{id}", method = RequestMethod.PUT)
-	public @ResponseBody boolean modifyUser(@PathVariable("id") long id, @RequestBody String password,
-			@RequestBody String name, HttpServletResponse res) {
+	public @ResponseBody boolean modifyUser(@PathVariable("id") long id, @RequestBody User newUser,
+			HttpServletResponse res) {
 
 		User user = userRepo.findById(id).orElse(null);
 
@@ -68,15 +66,15 @@ public class UserController {
 			res.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			return false;
 		} else {
-			user.setPassword(password);
-			user.setName(name);
+			user.setPassword(newUser.getPassword());
+			user.setName(newUser.getName());
 			userRepo.save(user);
 			res.setStatus(HttpServletResponse.SC_OK);
 			return true;
 		}
 	}
 
-	// ªË¡¶
+	// Deletes
 	@RequestMapping(value = "/users/{id}", method = RequestMethod.DELETE)
 	public @ResponseBody boolean removeUser(@PathVariable("id") long id, HttpServletResponse res) {
 

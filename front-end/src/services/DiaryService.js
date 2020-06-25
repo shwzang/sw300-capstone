@@ -12,19 +12,13 @@ const apiClient = axios.create({
 
 export default {
   logIn (userId, password) {
-    return apiClient.get("/users/" + userId + "/" + password)
-  },
-  checkDuplicated (userId) {
-    return apiClient.get("/users/" + userId + "/duplicated")
+    return apiClient.get("/login/" + userId + "/" + password)
   },
   postUser(user) {
     return apiClient.post("/users", user)
   },
   getDiaries(userId) {
     return apiClient.get("/diaries/" + userId)
-  },
-  getTodayDiary(userId) {
-    return apiClient.get("/diaries/today/" + userId)
   },
   postDiary(userId, diary) {
     return apiClient.post("/diaries/" + userId, diary)
