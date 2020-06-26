@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.example.demo.User.User;
 import com.example.demo.User.UserRepository;
 import com.example.demo.diaryGoal.DiaryGoal;
-import com.example.demo.diaryGoal.DiaryGoalRepository;
 
 @Controller
 public class DiaryController {
@@ -26,9 +25,6 @@ public class DiaryController {
 
 	@Autowired
 	UserRepository userRepo;
-	
-	@Autowired
-	DiaryGoalRepository diaryGoalRepo;
 	
 	@RequestMapping(value = "/diaries")
 	public @ResponseBody Collection<Diary> getAllDiaries() {

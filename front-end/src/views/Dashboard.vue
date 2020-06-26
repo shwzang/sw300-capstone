@@ -1,41 +1,48 @@
 <template>
   <v-row align="stretch" justify="center">
-    <v-col cols="10" sm="5"> <h2>My Diary</h2> </v-col>
-    <v-col cols="10" sm="5"> {{ user.name }}님 환영합니다 </v-col>
-    <v-col cols="10" sm="4" align="stretch">
+    <v-col cols="10" sm="5"> <h1>Dashboard</h1> </v-col>
+    <v-col cols="10" sm="5" align="right"> {{ user.name }}님 환영합니다 </v-col>
+    <v-col cols="10" sm="4">
       <v-card min-height="300" class="mx-auto">
         <v-card-title class="headline">나의 목표</v-card-title>
+
+        <v-divider class="mx-4"></v-divider>
+
         <v-card-text>
           <v-list v-if="goals.length > 0">
-            <v-list-item-group v-model="item" color="primary">
-              <v-list-item v-for="goal in goals" :key="goal.id">
-                <v-list-item-content>
-                  <v-list-item-title>{{ goal.name }}</v-list-item-title>
-                  <v-list-item-subtitle>
-                    {{ goal.description }}
-                  </v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list-item-group>
+            <v-list-item v-for="goal in goals" :key="goal.id">
+              <v-list-item-content>
+                <v-list-item-title>{{ goal.name }}</v-list-item-title>
+                <v-list-item-subtitle>
+                  {{ goal.description }}
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
           </v-list>
         </v-card-text>
+
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn text :to="{ name: 'Goal' }">목표 관리</v-btn>
         </v-card-actions>
       </v-card>
     </v-col>
-    <v-col cols="10" sm="6" align="stretch">
+
+    <v-col cols="10" sm="6">
       <v-card class="fill-height">
         <v-card-title class="headline">나의 일기</v-card-title>
+
+        <v-divider class="mx-4"></v-divider>
+
         <v-card-text v-if="todayDiary != null">
-          오늘 일기를 작성하였습니다.
-          <br />
+          오늘 일기를 작성하였습니다. <br />
           {{ todayDiary.title }}
+          <v-img src="@/assets/stamp.png" :aspect-ratio="12/10" contain max-height="150"> </v-img>
         </v-card-text>
         <v-card-text v-else>
           오늘 일기를 작성하지 않았습니다
         </v-card-text>
+
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn v-if="todayDiary == null" text :to="{ name: 'DiaryCreate' }">

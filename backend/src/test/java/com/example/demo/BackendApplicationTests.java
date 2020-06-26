@@ -33,36 +33,50 @@ class BackendApplicationTests {
 	// use case flow 1: 회원가입을 한다.
 	// use case post-condition: 회원 가입한 정보를 기반으로 유저 데이터가 추가된다.
 	@Test
-	void testAddandDeleteUser(@Autowired UserController controller, @Autowired UserRepository repo) {
+	void testAddUser(@Autowired UserController controller, @Autowired UserRepository repo) {
+		
 		User user = new User();
 		user.setId(new Long(11111));
-		user.setUserId("Hong");
-		user.setPassword("12341234");
-		user.setName("홍길동");
+		user.setUserId("AddTest");
+		user.setPassword("AddTest");
+		user.setName("AddTest");
 
-		// Add User
+		// 회원을 추가한다.
 		long beforeParentCounts = repo.count();
 		User returnedUser = controller.addUser(user);
 		Assertions.assertEquals(beforeParentCounts + 1, repo.count());
 
+		
+		// Post-Condition : 회원 가입한 정보를 기반으로 유저 데이터가 추가된다.
+		
 		// User ID, 이름, 비밀번호는 입력한 값과 같아야 함
 		Assertions.assertEquals(user.getUserId(), returnedUser.getUserId());
 		Assertions.assertEquals(user.getName(), returnedUser.getName());
 		Assertions.assertEquals(user.getPassword(), returnedUser.getPassword());
 
-		// ID, toString은 입력한 정보와 다름
+		// ID, toString은 입력한 정보와 다름나 존재해야 함
 		Assertions.assertNotNull(returnedUser.getId());
 		Assertions.assertNotNull(returnedUser.toString());
 
-		// -----------
-		// Delete User
+		// 사후처리 - Delete User
 		controller.removeUser(returnedUser.getId(), res);
 	}
 
 	@Test
 	void testGetUsers(@Autowired UserController controller) {
+		// 사전 처리 - 유저 추가 
+		User user = new User();
+		user.setId(new Long(11111));
+		user.setUserId("AddTest");
+		user.setPassword("AddTest");
+		user.setName("AddTest");
+		User returnedUser = controller.addUser(user);
+		
 		ArrayList<User> userList = (ArrayList<User>) controller.getUsers();
 		Assertions.assertNotNull(userList);
+		
+		// 사후 처리 - 유저 삭제
+		controller.removeUser(returnedUser.getId(), res);
 	}
 
 	@Test
@@ -97,6 +111,8 @@ class BackendApplicationTests {
 		Assertions.assertNull(noUser);
 	}
 
+	// use case flow 1: 로그인을 한다.
+	// use case post-condition: 아이디와 패스워드가 유효하면 유저데이터를 반환한다. 
 	@Test
 	void testLogin(@Autowired UserController controller) {
 		ArrayList<User> userList = (ArrayList<User>) controller.getUsers();

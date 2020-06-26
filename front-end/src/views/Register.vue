@@ -37,8 +37,8 @@
         
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="success" @click="summitRegister"> 회원 가입 </v-btn>
-          <v-btn color="info" :to="{ name: 'Login' }"> 취소 </v-btn>
+          <v-btn color="primary" @click="summitRegister"> 회원 가입 </v-btn>
+          <v-btn color="error" :to="{ name: 'Login' }"> 취소 </v-btn>
         </v-card-actions>
       </v-card>
 

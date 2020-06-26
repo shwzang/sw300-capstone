@@ -24,8 +24,9 @@
           </v-text-field>
         </v-card-text>
         <v-card-actions>
-          <v-btn @click="modifyGoal"> 작성 완료 </v-btn>
-          <v-btn :to="{ name: 'Goal' }"> 작성 취소 </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" @click="modifyGoal"> 작성 완료 </v-btn>
+          <v-btn color = "error" :to="{ name: 'Goal' }"> 작성 취소 </v-btn>
         </v-card-actions>
       </v-card>
     </v-col>

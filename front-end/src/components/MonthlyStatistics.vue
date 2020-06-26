@@ -1,24 +1,42 @@
 <template>
   <v-col cols="10">
     <v-card min-height="300">
-      <v-card-title class="headline">월별 통계</v-card-title>
       <v-row>
         <v-col cols="12" sm="8" align="center" justify="center">
-          <v-date-picker
-            ref="picker"
-            v-model="date"
-            :picker-date.sync="pickerDate"
-            landscape
-            full-width
-            show-current
-            :events="enableEvents ? functionEvents : null"
-          >
-          </v-date-picker>
+          <v-card-text>
+            <v-date-picker
+              ref="picker"
+              v-model="date"
+              :picker-date.sync="pickerDate"
+              full-width
+              show-current
+              :events="functionEvents"
+            >
+            </v-date-picker>
+          </v-card-text>
         </v-col>
+        
         <v-col cols="12" sm="4">
-          <div class="title">{{ pickerDate }} 통계</div>
-          <div>일기 작성 일 : {{ diaryDates(monthDiaries).length }}</div>
-          <div>목표 달성 일 : {{ diaryDates(completedDiaries).length }}</div>
+          <v-card-title>{{ pickerDate }} 통계</v-card-title>
+          <v-card-text>
+            <div>일기 작성 일 : {{ diaryDates(monthDiaries).length }}</div>
+            <div>
+              목표 100% 달성 일 : {{ diaryDates(completedDiaries).length }}
+            </div>
+          </v-card-text>
+
+          <v-container v-if="dateDiary(selectedDate) != null">
+            <v-divider></v-divider>
+            <v-card-title>
+              {{ selectedDate.toISOString().substr(0, 10) }} 일기
+            </v-card-title>
+            {{ dateDiary(selectedDate).title }}
+            <v-card-text v-if="dateDiary(selectedDate).diaryGoals.length > 0">
+              <br />
+              {{ dateDiary(selectedDate).diaryGoals.length }} 개 목표 중
+              {{ goalCompleted(dateDiary(selectedDate).diaryGoals) }} 개 달성!
+            </v-card-text>
+          </v-container>
         </v-col>
       </v-row>
     </v-card>
@@ -31,8 +49,7 @@ import { mapState } from "vuex";
 export default {
   data: () => ({
     date: new Date().toISOString().substr(0, 10),
-    pickerDate: null,
-    enableEvents: true
+    pickerDate: null
   }),
   computed: {
     ...mapState(["diaries"]),
@@ -64,6 +81,9 @@ export default {
         return true;
       });
       return result;
+    },
+    selectedDate() {
+      return new Date(this.date);
     }
   },
   methods: {
@@ -72,17 +92,27 @@ export default {
     },
     dateFunctionEvents(date) {
       const [, , day] = date.split("-");
-      if (this.diaryDates(this.completedDiaries).includes(parseInt(day, 10)))
-        return "green";
       if (this.diaryDates(this.nonCompletedDiaries).includes(parseInt(day, 10)))
         return "red";
+      if (this.diaryDates(this.completedDiaries).includes(parseInt(day, 10)))
+        return "green";
       if (this.diaryDates(this.monthDiaries).includes(parseInt(day, 10)))
         return true;
       return false;
+    },
+    dateDiary(date) {
+      return this.$store.state.diaries.find(diary => {
+        let diaryDate = new Date(diary.date);
+        let result = diaryDate.getFullYear() == date.getFullYear();
+        result &= diaryDate.getMonth() == date.getMonth();
+        result &= diaryDate.getDate() == date.getDate();
+        return result;
+      });
+    },
+    goalCompleted(goals) {
+      let completed = goals.filter(goal => goal.achieved == true);
+      return completed.length;
     }
-  },
-  watch: {
-    pickerDate() {}
   }
 };
 </script>
