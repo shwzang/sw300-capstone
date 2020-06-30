@@ -57,6 +57,8 @@ class BackendApplicationTests {
 		// ID, toString은 입력한 정보와 다름나 존재해야 함
 		Assertions.assertNotNull(returnedUser.getId());
 		Assertions.assertNotNull(returnedUser.toString());
+		Assertions.assertNotNull(returnedUser.getDiaries());
+		Assertions.assertNotNull(returnedUser.getGoals());
 
 		// 사후처리 - Delete User
 		controller.removeUser(returnedUser.getId(), res);
@@ -72,6 +74,7 @@ class BackendApplicationTests {
 		user.setName("AddTest");
 		User returnedUser = controller.addUser(user);
 		
+		// Get Users
 		ArrayList<User> userList = (ArrayList<User>) controller.getUsers();
 		Assertions.assertNotNull(userList);
 		
@@ -82,17 +85,19 @@ class BackendApplicationTests {
 	@Test
 	void testGetUser(@Autowired UserController controller) {
 
+		// 사전 처리
 		ArrayList<User> userList = (ArrayList<User>) controller.getUsers();
 		Assertions.assertNotNull(userList);
 
 		String userId = userList.get(0).getUserId();
 
+		// Get User by User's Id
 		User user = controller.getUserByUserId(userId, res);
 		Long id = user.getId();
 
 		User returnedUser = controller.getUser(id);
 		Assertions.assertNotNull(returnedUser);
-		Assertions.assertEquals(returnedUser.getUserId(), userId);
+		Assertions.assertEquals(userId, returnedUser.getUserId());
 	}
 
 	@Test
@@ -104,6 +109,7 @@ class BackendApplicationTests {
 		String userId = userList.get(0).getUserId();
 		String noUserId = "~~~";
 
+		// Get User by User's User Id
 		User user = controller.getUserByUserId(userId, res);
 		Assertions.assertNotNull(user);
 
@@ -111,7 +117,7 @@ class BackendApplicationTests {
 		Assertions.assertNull(noUser);
 	}
 
-	// use case flow 1: 로그인을 한다.
+	// use case flow 2: 로그인을 한다.
 	// use case post-condition: 아이디와 패스워드가 유효하면 유저데이터를 반환한다. 
 	@Test
 	void testLogin(@Autowired UserController controller) {
@@ -170,15 +176,17 @@ class BackendApplicationTests {
 		boolean isRemoved = controller.removeUser(returnedUser.getId(), res);
 		User removedUser = controller.getUserByUserId(userId, res);
 		Assertions.assertNull(removedUser);
-		Assertions.assertEquals(isRemoved, true);
+		Assertions.assertEquals(true, isRemoved);
 		Assertions.assertEquals(beforeParentCounts - 1, repo.count());
 
 		isRemoved = controller.removeUser(returnedUser.getId(), res);
-		Assertions.assertEquals(isRemoved, false);
+		Assertions.assertEquals(false, isRemoved);
 	}
 
+	// use case flow 4: 일기를 작성한다.
+	// use case post-condition: 작성한 일기를 데이터베이스에 추가한다. 
 	@Test
-	void testAddandDeleteDiary(@Autowired DiaryController controller, @Autowired UserController userController) {
+	void testAddandDeleteDiary(@Autowired DiaryController controller, @Autowired UserController userController, @Autowired GoalController goalController, @Autowired DiaryGoalController diaryGoalController) {
 		ArrayList<User> userList = (ArrayList<User>) userController.getUsers();
 		Assertions.assertNotNull(userList);
 
@@ -191,10 +199,24 @@ class BackendApplicationTests {
 		diary.setContent("Content");
 		diary.setUser(user);
 		diary.setDate(new Date());
+		
+		ArrayList<Goal> goalList = (ArrayList<Goal>) goalController.getAllGoals();
+		Assertions.assertNotNull(goalList);
+		Goal goal = goalList.get(0);
+		
+		DiaryGoal diaryGoal = new DiaryGoal();
+		diaryGoal.setAchieved(true);
+		diaryGoal.setGoal(goal);
+		diaryGoal.setDiary(diary);
+		diaryGoal.setId(new Long(111111));
+		ArrayList<DiaryGoal> diaryGoalList = (ArrayList<DiaryGoal>) diary.getDiaryGoals();
+		diaryGoalList.add(diaryGoal);
+		diary.setDiaryGoals(diaryGoalList);
 
 		Collection<Diary> beforeDiaries = controller.getDiaries(user.getId());
 		user.setDiaries((ArrayList<Diary>) beforeDiaries);
 
+		// Diary 추가
 		Diary returnedDiary = controller.addDiary(diary, user.getId(), res);
 
 		int AfterCreation = controller.getDiaries(user.getId()).size();
@@ -213,13 +235,19 @@ class BackendApplicationTests {
 
 		// -------------------------------
 		// Remove
+		Long diaryGoalId = returnedDiary.getDiaryGoals().get(0).getId();
+		boolean isDiaryGoalRemoved = diaryGoalController.removeDiaryGoal(diaryGoalId, res);
+		Assertions.assertEquals(true, isDiaryGoalRemoved);
+		boolean wrongDiaryGoalRemoved = diaryGoalController.removeDiaryGoal(-1, res);
+		Assertions.assertEquals(false, wrongDiaryGoalRemoved);
+		
 		boolean isRemoved = controller.removeDiary(returnedDiary.getId(), res);
-		Assertions.assertEquals(isRemoved, true);
+		Assertions.assertEquals(true, isRemoved);
 		int AfterRemove = controller.getDiaries(user.getId()).size();
 		Assertions.assertEquals(AfterCreation - 1, AfterRemove);
 
 		boolean wrongDiaryRemoved = controller.removeDiary(-1, res);
-		Assertions.assertEquals(wrongDiaryRemoved, false);
+		Assertions.assertEquals(false, wrongDiaryRemoved);
 	}
 
 	@Test
@@ -254,7 +282,7 @@ class BackendApplicationTests {
 		newDiary.setUser(diary.getUser());
 
 		boolean isModified = controller.modifyDiary(diary.getId(), newDiary, res);
-		Assertions.assertEquals(isModified, true);
+		Assertions.assertEquals(true, isModified);
 
 		ArrayList<Diary> modifiedDiaryList = (ArrayList<Diary>) controller.getAllDiaries();
 		Assertions.assertNotNull(modifiedDiaryList);
@@ -265,7 +293,7 @@ class BackendApplicationTests {
 		Assertions.assertEquals(newDiary.getTitle(), returnedDiary.getTitle());
 
 		boolean wrongModified = controller.modifyDiary(-1, newDiary, res);
-		Assertions.assertEquals(wrongModified, false);
+		Assertions.assertEquals(false, wrongModified);
 
 		// 원상 복구
 		controller.modifyDiary(diary.getId(), diary, res);
@@ -288,10 +316,11 @@ class BackendApplicationTests {
 		Assertions.assertNotNull(goals);
 	}
 
+	// use case flow 5: 목표를 추가한다.
+	// use case post-condition: 추가한 목표가 DB에 생성된다. 
 	@Test
 	void testAddGoal(@Autowired GoalController controller, @Autowired UserController userController) {
 		Goal goal = new Goal();
-		goal.setId(new Long(111));
 		goal.setDescription("Description");
 		goal.setInProgress(true);
 		goal.setName("Name");
@@ -306,10 +335,12 @@ class BackendApplicationTests {
 		Assertions.assertNotNull(returnedGoal.getId());
 		Assertions.assertNotNull(returnedGoal.getUser());
 		Assertions.assertNotNull(returnedGoal.toString());
+		Assertions.assertNotNull(returnedGoal.getDiaryGoal());
 
-		Assertions.assertEquals(returnedGoal.getDescription(), goal.getDescription());
-		Assertions.assertEquals(returnedGoal.getName(), goal.getName());
-		Assertions.assertEquals(returnedGoal.isInProgress(), goal.isInProgress());
+		Assertions.assertEquals(goal.getDescription(), returnedGoal.getDescription());
+		Assertions.assertEquals(goal.getName(), returnedGoal.getName());
+		Assertions.assertEquals(goal.isInProgress(), returnedGoal.isInProgress());
+		
 
 		Goal wrongGoal = controller.addGoal(goal, -1, res);
 		Assertions.assertNull(wrongGoal);
@@ -318,12 +349,14 @@ class BackendApplicationTests {
 		// Remove Goal
 
 		boolean isRemoved = controller.removeGoal(returnedGoal.getId(), res);
-		Assertions.assertEquals(isRemoved, true);
+		Assertions.assertEquals(true, isRemoved);
 
 		boolean wrongRemoved = controller.removeGoal(-1, res);
-		Assertions.assertEquals(wrongRemoved, false);
+		Assertions.assertEquals(false, wrongRemoved);
 	}
 
+	// use case flow 6, 7: 목표를 수정한다.
+	// use case post-condition: 수정된 목표가 DB에 반영된다. 
 	@Test
 	void testModifyGoal(@Autowired GoalController controller, @Autowired UserController userController) {
 		ArrayList<Goal> goals = (ArrayList<Goal>) controller.getAllGoals();
@@ -338,7 +371,7 @@ class BackendApplicationTests {
 		newGoal.setInProgress(false);
 
 		boolean isModified = controller.modifyGoal(oldGoal.getId(), newGoal, res);
-		Assertions.assertEquals(isModified, true);
+		Assertions.assertEquals(true, isModified);
 
 		ArrayList<Goal> modifiedGoals = (ArrayList<Goal>) controller.getAllGoals();
 		Assertions.assertNotNull(modifiedGoals);
@@ -349,7 +382,7 @@ class BackendApplicationTests {
 		Assertions.assertEquals(newGoal.isInProgress(), goal.isInProgress());
 
 		boolean wrongModified = controller.modifyGoal(-1, newGoal, res);
-		Assertions.assertEquals(wrongModified, false);
+		Assertions.assertEquals(false, wrongModified);
 
 		// 원상복구
 		controller.modifyGoal(oldGoal.getId(), oldGoal, res);
